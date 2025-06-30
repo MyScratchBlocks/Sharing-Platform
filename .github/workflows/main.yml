@@ -1,4 +1,4 @@
-name: Build and DeployAdd commentMore actions
+name: Build and Deploy
 
 on:
   workflow_dispatch:
@@ -10,23 +10,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
-      with:
-        persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-    - name: Install Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 22
-        cache: npm
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
 
-    - run: npm ci
-    - run: npm run build
+      - name: Install dependencies
+        run: npm ci
 
-    - name: Deploy to GitHub Pages
-      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
-        publish_branch: gh-pages
+      - name: Build project
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          publish_branch: gh-pages
